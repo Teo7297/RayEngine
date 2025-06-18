@@ -1,15 +1,68 @@
-#include "RayEngine/TestPrint.h"
+#include "raylib.h"
 
-#include <iostream>
+#if defined(PLATFORM_WEB)
+#include <emscripten/emscripten.h>
+#endif
 
-int main(int argc, char const* argv[])
+//----------------------------------------------------------------------------------
+// Global Variables Definition
+//----------------------------------------------------------------------------------
+const int screenWidth = 800;
+const int screenHeight = 450;
+
+//----------------------------------------------------------------------------------
+// Module functions declaration
+//----------------------------------------------------------------------------------
+void UpdateDrawFrame(void);     // Update and Draw one frame
+
+//------------------------------------------------------------------------------------
+// Program main entry point
+//------------------------------------------------------------------------------------
+int main(void)
 {
-    std::cout << "Welcome to RayEngine!" << std::endl;
-    std::cout << "RayEngine Version: "
-        << RayEngine_GetVersionMajor() << "."
-        << RayEngine_GetVersionMinor() << "."
-        << RayEngine_GetVersionPatch() << std::endl;
-    std::cout << "Now trying to call a DLL function!" << std::endl;
-    TestWindow("Hello, RayEngine!");
+    // Initialization
+    //--------------------------------------------------------------------------------------
+    InitWindow(screenWidth, screenHeight, "raylib [core] example - basic window");
+
+#if defined(PLATFORM_WEB)
+    emscripten_set_main_loop(UpdateDrawFrame, 60, 1);
+#else
+    SetTargetFPS(60);   // Set our game to run at 60 frames-per-second
+    //--------------------------------------------------------------------------------------
+
+    // Main game loop
+    while(!WindowShouldClose())    // Detect window close button or ESC key
+    {
+        UpdateDrawFrame();
+    }
+#endif
+
+    // De-Initialization
+    //--------------------------------------------------------------------------------------
+    CloseWindow();        // Close window and OpenGL context
+    //--------------------------------------------------------------------------------------
+
     return 0;
+}
+
+//----------------------------------------------------------------------------------
+// Module Functions Definition
+//----------------------------------------------------------------------------------
+void UpdateDrawFrame(void)
+{
+    // Update
+    //----------------------------------------------------------------------------------
+    // TODO: Update your variables here
+    //----------------------------------------------------------------------------------
+
+    // Draw
+    //----------------------------------------------------------------------------------
+    BeginDrawing();
+
+    ClearBackground(RAYWHITE);
+
+    DrawText("Congrats! You created your first window!", 190, 200, 20, LIGHTGRAY);
+
+    EndDrawing();
+    //----------------------------------------------------------------------------------
 }
