@@ -9,6 +9,7 @@ include_directories(${CMAKE_SOURCE_DIR}/include)
 add_subdirectory(SimpleGameExample)
 add_subdirectory(ComputeShaderExample)
 add_subdirectory(EngineTesting)
+add_subdirectory(PhysicsExample)
 
 # You can add additional examples here
 # add_subdirectory(AnotherExample)

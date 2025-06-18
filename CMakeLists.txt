@@ -18,33 +18,61 @@ endif()
 # Include FetchContent module
 include(FetchContent)
 
+# Fetch raylib
 FetchContent_Declare(
     raylib
     GIT_REPOSITORY https://github.com/raysan5/raylib.git
     GIT_TAG master
 )
 
+# Fetch Bullet Physics
+FetchContent_Declare(
+    bullet
+    GIT_REPOSITORY https://github.com/bulletphysics/bullet3.git
+    GIT_TAG master
+)
+
+# Configure Bullet build options
+set(BUILD_BULLET2_DEMOS OFF CACHE BOOL "" FORCE)
+set(BUILD_CPU_DEMOS OFF CACHE BOOL "" FORCE)
+set(BUILD_OPENGL3_DEMOS OFF CACHE BOOL "" FORCE)
+set(BUILD_BULLET3 OFF CACHE BOOL "" FORCE)
+set(BUILD_EXTRAS OFF CACHE BOOL "" FORCE)
+set(BUILD_UNIT_TESTS OFF CACHE BOOL "" FORCE)
+set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE) # Static linking for Bullet
+
 # Don't build raylib examples 
 set(BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 
-# Fetch and make raylib available
-FetchContent_MakeAvailable(raylib)
+# Fetch and make libraries available
+FetchContent_MakeAvailable(raylib bullet)
 
 # Set include and source directories
 set(INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include)
 set(SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
-# Add include directory
-include_directories(${INCLUDE_DIR})
+# Add include directories
+include_directories(
+    ${INCLUDE_DIR}
+    ${bullet_SOURCE_DIR}/src
+)
 
 # Find all source files in src directory
 file(GLOB_RECURSE SOURCES ${SOURCE_DIR}/*.cpp)
 
-# Create library - static for Emscripten, shared for other platforms
-add_library(${PROJECT_NAME} SHARED ${SOURCES})  # DLL/SO for desktop
+# Create library - shared for desktop
+add_library(${PROJECT_NAME} SHARED ${SOURCES})
 
-# Link with raylib
-target_link_libraries(${PROJECT_NAME} PUBLIC raylib)
+# Link with raylib and Bullet libraries
+target_link_libraries(${PROJECT_NAME} PUBLIC 
+    raylib
+    LinearMath
+    Bullet3Common
+    BulletCollision
+    BulletDynamics
+    BulletInverseDynamics
+    BulletSoftBody
+)
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE RAYENGINE_EXPORTS)
 
